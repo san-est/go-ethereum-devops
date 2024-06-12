@@ -2,7 +2,7 @@ name: Docker Image Build and Push to ghcr
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
     types: [ labeled ]
 
   # Adding this so that I can test my jobs and run workflows manually from the Actions tab in the repository
