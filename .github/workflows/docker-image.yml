@@ -1,27 +1,41 @@
-name: Build & Push Docker image for project
+name: Docker Image Build and Push to ghcr
 
 on:
-  push:
-    types: [labeled]
   pull_request:
-    types: [labeled]
+    branches: [ "main" ]
+    types: [ labeled ]
+
+  # Adding this so that I can test my jobs and run workflows manually from the Actions tab in the repository
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: san-est/go-ethereum-devops
 
 jobs:
-
   build-and-push:
-
+    if: ${{ github.event.label.name == 'CI:Build' }}
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'pull_request' && github.event.label.name == 'CI:Build') }}
-    
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
     steps:
     - uses: actions/checkout@v4
-    - name: Login to Github Container repository
-    - uses: docker/login-action@v3.2.0
-      with: 
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag go-etherium-devops:$(date +%s)
-    - name: Push Docker image to Github container repository
-      run: docker push ghcr.io/go-etherium-devops:$(date +%s)
+
+    - name: Login to registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push docker image
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
