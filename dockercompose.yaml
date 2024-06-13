@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   geth:
-    image: san-est/go-ethereum-devops:latest
+    image: ghcr.io/san-est/go-ethereum-devops:9
     #ports were grabbed from the docker quick start in the README within https://github.com/ethereum/go-ethereum
     ports:
       - "8545:8545"
