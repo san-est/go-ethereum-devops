@@ -1,0 +1,24 @@
+{
+  "name": "hardhat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "san-est",
+  "license": "ISC",
+  "description": "Sample hardhat project",
+  "devDependencies": {
+    "hardhat": "^2.22.5",
+    "harhat": "^1.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/san-est/go-ethereum-devops.git"
+  },
+  "bugs": {
+    "url": "https://github.com/san-est/go-ethereum-devops/issues"
+  },
+  "homepage": "https://github.com/san-est/go-ethereum-devops#readme"
+}
