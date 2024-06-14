@@ -35,7 +35,7 @@ jobs:
 
     - name: Running image container
       run: |
-        docker run -d -name devnet -p 8545:8545 -v ${{ github.workspace }}/hardhat: /workspace/hardhat ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:9
+        docker run -d --name devnet -p 8545:8545 -v ${{ github.workspace }}/hardhat: /workspace/hardhat ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:9
   
     - name: Deploy hardhat sample project
       run: |
