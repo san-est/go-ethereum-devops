@@ -40,7 +40,7 @@ jobs:
     - name: Installing Node.js, npm and local hardhat so that hardhat sample can run
       run: |
         docker exec devnet apk add --no-cache nodejs npm
-        docker exec devnet sh -c "cd /workspace/hardhat && npm install"
+        docker exec devnet sh -c "cd /workspace/hardhat && npm install hardhat"
 
     - name: Deploy hardhat sample project
       run: |
