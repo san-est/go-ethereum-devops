@@ -54,12 +54,13 @@ jobs:
     - name: Verify if Hardhat is installed
       run: |
         docker exec devnet npx hardhat --version
+        docker exec devnet npx hardhat --version
 
     - name: Deploy hardhat sample project
       run: |
         docker exec devnet sh -c "cd /workspace/hardhat"
-        docker exec devnet npx hardhat compile --config /workspace/hardhat/hardhat.config.js
-        docker exec devnet npx hardhat run /workspace/hardhat/scripts/deploy.js --network devnet
+        docker exec devnet npx hardhat
+       
     
     - name: Build a new docker image
       run: |
