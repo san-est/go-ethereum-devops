@@ -58,7 +58,7 @@ jobs:
 
     - name: Deploy hardhat sample project
       run: |
-        docker exec devnet sh -c "npx hardhat test"
+        docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat test"
        
     
     - name: Build a new docker image
