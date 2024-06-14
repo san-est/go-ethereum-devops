@@ -59,7 +59,6 @@ jobs:
     - name: Deploy hardhat sample project
       run: |
         docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat test"
-        docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat node"
         docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat ignition deploy ./ignition/modules/Lock.js --network localhost"
 
     - name: Build a new docker image
