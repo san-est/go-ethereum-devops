@@ -42,9 +42,9 @@ jobs:
         docker exec devnet ls /workspace/hardhat
         docker exec devnet ls -l /workspace/hardhat
         docker exec devnet ls -l /workspace
-      #steps were added so i can troublshoot if the folder is mounted properly
+      #steps were added so i can troublshoot and see if the folder is mounted properly
       
-    - name: Installing Node.js, npm and local hardhat so that hardhat sample can run
+    - name: Installing Node.js and npm
       run: |
         docker exec devnet apk add --no-cache nodejs npm
     
@@ -54,12 +54,14 @@ jobs:
     - name: Verify if Hardhat is installed
       run: |
         docker exec devnet npx hardhat --version
-        docker exec devnet npx hardhat --version
 
     - name: Deploy hardhat sample project
       run: |
-        docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat test"
         docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat ignition deploy ./ignition/modules/Lock.js"
+
+    - name: Testing contracts
+      run: |
+        docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat test"
 
     - name: Build a new docker image
       run: |
