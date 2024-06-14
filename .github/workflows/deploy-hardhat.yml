@@ -57,7 +57,7 @@ jobs:
 
     - name: Deploy hardhat sample project
       run: |
-        docker exec devnet sh -c "cd /workspace/hardhat
+        docker exec devnet sh -c "cd /workspace/hardhat"
         docker exec devnet npx hardhat compile --config /workspace/hardhat/hardhat.config.js
         docker exec devnet npx hardhat run /workspace/hardhat/scripts/deploy.js --network devnet
     
