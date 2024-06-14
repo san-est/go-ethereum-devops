@@ -34,4 +34,18 @@ jobs:
       run: docker pull ghcr.io/san-est/go-ethereum-devops:9
 
     - name: Running image container
-      run: docker run -d -name devnet -p 8545:8545 -v 
+      run: |
+        docker run -d -name devnet -p 8545:8545 -v ${{ github.workspace }}/hardhat: /workspace/hardhat ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:9
+  
+    - name: Deploy hardhat sample project
+      run: |
+        docker exec devnet npx hardhat compile --config /workspace/hardhat/hardhat.config.js
+        docker exec devnet npx hardhat run /workspace/hardhat/scripts/deploy.js --network development
+    
+    - name: Build a new docker image
+      run: |
+        docker commit devnet go-eth-hardhat:latest
+        docker tag go-eth-hardhat:latest ${{ env.REGISTRY }}/${{ github.repository_owner }}/go-eth-hardhat:latest
+  
+    - name: Push new image to ghcr.io
+      run: docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/go-eth-hardhat:latest
