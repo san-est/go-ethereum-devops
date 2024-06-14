@@ -51,6 +51,10 @@ jobs:
     - name: Install local version of hardhat
       run: docker exec devnet sh -c "cd /workspace/hardhat && npm install hardhat"
 
+    - name: Verify if Hardhat is installed
+      run: |
+        docker exec devnet npx hardhat --version
+
     - name: Deploy hardhat sample project
       run: |
         docker exec devnet npx hardhat compile --config /workspace/hardhat/hardhat.config.js
