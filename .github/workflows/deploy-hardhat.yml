@@ -37,6 +37,10 @@ jobs:
       run: |
         docker run -d --name devnet -p 8545:8545 -v ${{ github.workspace }}/hardhat:/workspace/hardhat ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:9
   
+    - name: Installing Node.js and npm so that hardhat can run
+      run: |
+        docker exec devnet apk add --no-cache nodejs npm
+
     - name: Deploy hardhat sample project
       run: |
         docker exec devnet npx hardhat compile --config /workspace/hardhat/hardhat.config.js
