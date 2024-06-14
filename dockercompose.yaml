@@ -1,11 +1,11 @@
 services:
   geth:
-    image: ghcr.io/san-est/go-ethereum-devops:9
+    image: ghcr.io/san-est/go-ethereum-devops:latest
     #ports were grabbed from the docker quick start in the README within https://github.com/ethereum/go-ethereum
     ports:
       - "8545:8545"
       - "30303:30303"
     volumes:
       - ./data:/root/.ethereum
-    #running the node in dev mode, enabling RPC server, binding it to all availible networks, sets on which port RPC should listen to and availible APIs..
+    #running the node in dev mode, enabling RPC server, binding it to all availible networks, sets on which port RPC should listen to and availible APIs.
     command: ["--dev", "--http", "--http.addr", "0.0.0.0", "--http.port", "8545", "--http.api", "eth,net,web3"]
