@@ -35,8 +35,14 @@ jobs:
 
     - name: Running image container
       run: |
-        docker run -d --name devnet -p 8545:8545 -v ${{ github.workspace }}/hardhat:/workspace/hardhat ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:9
-  
+        echo "Workspace path: ${{ github.workspace }}/hardhat"
+        docker run -d --name devnet -p 8545:8545 \
+        -v ${{ github.workspace }}/hardhat:/workspace/hardhat \
+        ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:9
+        docker exec devnet ls /workspace/hardhat
+        docker exec devnet ls -l /workspace/hardhat
+        docker exec devnet ls -l /workspace
+      #steps were added so i can troublshoot if the folder is mounted properly
     - name: Installing Node.js, npm and local hardhat so that hardhat sample can run
       run: |
         docker exec devnet apk add --no-cache nodejs npm
