@@ -43,7 +43,7 @@ jobs:
 
     - name: Installing local hardhat
       run: |
-        docker exec devnet sh -c "cd /workspace/hardhat && npm install"
+        docker exec devnet sh -c "cd /workspace/hardhat && npm install --save-dev hardhat"
         
     - name: Deploy hardhat sample project
       run: |
