@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: san-est/go-ethereum-devops
+  IMAGE_NAME: go-ethereum-devops
 
 jobs:
   deploy-hardhat:
@@ -31,14 +31,14 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Pull image
-      run: docker pull ghcr.io/san-est/go-ethereum-devops:9
+      run: docker pull ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
 
     - name: Running image container
       run: |
         echo "Workspace path: ${{ github.workspace }}/hardhat"
         docker run -d --name devnet -p 8545:8545 \
         -v ${{ github.workspace }}/hardhat:/workspace/hardhat \
-        ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:9
+        ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
         docker exec devnet ls /workspace/hardhat
         docker exec devnet ls -l /workspace/hardhat
         docker exec devnet ls -l /workspace
