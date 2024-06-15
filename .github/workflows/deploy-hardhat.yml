@@ -43,6 +43,7 @@ jobs:
 
     - name: Copy over hardhat files to running container
       run: |
+        docker exec devnet mkdir -p /workspace/hardhat
         docker cp ${{ github.workspace }}/hardhat devnet:/workspace/hardhat
         docker exec devnet ls /workspace/hardhat
         docker exec devnet ls -l /workspace/hardhat
