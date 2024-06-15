@@ -27,12 +27,18 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_container_cluster" "default" {
-  name = "go-eth-cluster"
+  name = var.cluster_name
 
-  location                 = "us-central1"
+  location                 = var.region
   enable_autopilot         = true
   enable_l4_ilb_subsetting = true
+  
+  initial_node_count = 1
 
+  node_config {
+    machine_type = "e2-medium"
+  }
+  
   network    = google_compute_network.default.id
   subnetwork = google_compute_subnetwork.default.id
 

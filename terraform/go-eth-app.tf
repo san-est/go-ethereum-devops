@@ -1,5 +1,10 @@
 data "google_client_config" "default" {}
 
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
 provider "kubernetes" {
   host                   = "https://${google_container_cluster.default.endpoint}"
   token                  = data.google_client_config.default.access_token
@@ -11,12 +16,19 @@ provider "kubernetes" {
   ]
 }
 
+resource "kubernetes_namespace" "example" {
+  metadata {
+    name = "go-eth-namespace"
+  }
+}
+
 resource "kubernetes_deployment_v1" "default" {
   metadata {
     name = "go-eth-app"
   }
 
   spec {
+    replicas = 1
     selector {
       match_labels = {
         app = "go-eth-app"
@@ -39,49 +51,6 @@ resource "kubernetes_deployment_v1" "default" {
             container_port = 8080
             name           = "go-eth-svc"
           }
-
-          security_context {
-            allow_privilege_escalation = false
-            privileged                 = false
-            read_only_root_filesystem  = false
-
-            capabilities {
-              add  = []
-              drop = ["NET_RAW"]
-            }
-          }
-
-          liveness_probe {
-            http_get {
-              path = "/"
-              port = "go-eth-svc"
-
-              http_header {
-                name  = "go-eth-healthcheck"
-                value = "Good"
-              }
-            }
-
-            initial_delay_seconds = 3
-            period_seconds        = 3
-          }
-        }
-
-        security_context {
-          run_as_non_root = true
-
-          seccomp_profile {
-            type = "RuntimeDefault"
-          }
-        }
-
-        # Toleration is currently required to prevent perpetual diff:
-        # https://github.com/hashicorp/terraform-provider-kubernetes/pull/2380
-        toleration {
-          effect   = "NoSchedule"
-          key      = "kubernetes.io/arch"
-          operator = "Equal"
-          value    = "amd64"
         }
       }
     }
@@ -91,18 +60,17 @@ resource "kubernetes_deployment_v1" "default" {
 resource "kubernetes_service_v1" "default" {
   metadata {
     name = "go-eth-loadbalancer"
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
     selector = {
-      app = kubernetes_deployment_v1.default.spec[0].selector[0].match_labels.app
+      app = go-eth-app
     }
-
-    ip_family_policy = "RequireDualStack"
 
     port {
       port        = 80
-      target_port = kubernetes_deployment_v1.default.spec[0].template[0].spec[0].container[0].port[0].name
+      target_port = 8080
     }
 
     type = "LoadBalancer"
