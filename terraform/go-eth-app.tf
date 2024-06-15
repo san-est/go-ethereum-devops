@@ -5,14 +5,6 @@ provider "google" {
   region  = var.region
 }
 
-provider "kubernetes" {
-  host                   = "https://${google_container_cluster.primary.endpoint}"
-  token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
-}
-
-
-
 resource "google_container_cluster" "primary" {
   name     = var.cluster_name
   location = var.region
@@ -43,7 +35,16 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
-resource "kubernetes_namespace" "example" {
+provider "kubernetes" {
+  host                   = "https://${google_container_cluster.primary.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
+
+  # Enforce dependency on cluster creation
+  depends_on = [google_container_cluster.primary]
+}
+
+resource "kubernetes_namespace" "default" {
   metadata {
     name = "go-eth-namespace"
   }
@@ -51,8 +52,8 @@ resource "kubernetes_namespace" "example" {
 
 resource "kubernetes_deployment_v1" "primary" {
   metadata {
-    name = "go-eth-app"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    name      = "go-eth-app"
+    namespace = kubernetes_namespace.default.metadata[0].name
   }
 
   spec {
@@ -86,8 +87,8 @@ resource "kubernetes_deployment_v1" "primary" {
 
 resource "kubernetes_service_v1" "primary" {
   metadata {
-    name = "go-eth-loadbalancer"
-    namespace = kubernetes_namespace.example.metadata[0].name
+    name      = "go-eth-loadbalancer"
+    namespace = kubernetes_namespace.default.metadata[0].name
   }
 
   spec {
