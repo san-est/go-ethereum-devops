@@ -65,7 +65,7 @@ resource "kubernetes_service_v1" "default" {
 
   spec {
     selector = {
-      app = go-eth-app
+      app = "go-eth-app"
     }
 
     port {
