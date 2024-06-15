@@ -99,7 +99,6 @@ resource "kubernetes_service_v1" "primary" {
       target_port = 8080
     }
   }
-  depends_on = [google_container_cluster.primary]
   depends_on = [time_sleep.wait_service_cleanup]
 }
 
