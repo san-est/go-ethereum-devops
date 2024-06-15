@@ -9,3 +9,8 @@ services:
       - ./data:/root/.ethereum
     #running the node in dev mode, enabling RPC server, binding it to all availible networks, sets on which port RPC should listen to and availible APIs.
     command: ["--dev", "--http", "--http.addr", "0.0.0.0", "--http.port", "8545", "--http.api", "eth,net,web3"]
+
+  blockscout:
+    build:
+      context: "https://github.com/blockscout/blockscout.git"
+    
