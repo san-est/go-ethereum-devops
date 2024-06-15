@@ -1,3 +1,28 @@
+## DevOps Take Home Task
+The beginning of this README file explains steps taken to complete the home assignment, afterwards, there is the official documentation of the golang execution layer implementation for the Etherium protocol.
+
+I'll describe my actions step by step as per the assignment:
+
+1. Fork the following repo:
+    a. go-ethereum (geth) https://github.com/ethereum/go-ethereum
+   - If you are reading this then you are in the right place, a fork of the source :)
+
+2. Update your forked repo with the following functionality:
+    a. When a PR with label `CI:Build` is merged in it, a trigger kicks in and:
+        1.1. builds a new docker image of the given project
+        1.2. uploads it to a registry
+    - This workflow is realized with the .github/workflows/docker-image.yml file, once opened you will see that I've written comments for each of the steps to give a more detailed explanation for each of the steps.
+    b. Create a Docker Compose definition that runs a local devnet with the newly built image.
+    - The Docker compose file resides in the root of the git repository named: dockercompose.yaml, again I've added comments for the steps for further details.
+
+
+
+
+
+
+
+
+
 ## Go Ethereum
 
 Golang execution layer implementation of the Ethereum protocol.
