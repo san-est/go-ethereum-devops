@@ -39,8 +39,11 @@ jobs:
       run: |
         echo "Workspace path: ${{ github.workspace }}/hardhat"
         docker run -d --name devnet -p 8545:8545 \
-        -v ${{ github.workspace }}/hardhat:/workspace/hardhat \
         ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Copy over hardhat files to running container
+      run: |
+        docker cp ${{ github.workspace }}/hardhat devnet:/workspace/hardhat
         docker exec devnet ls /workspace/hardhat
         docker exec devnet ls -l /workspace/hardhat
         docker exec devnet ls -l /workspace
