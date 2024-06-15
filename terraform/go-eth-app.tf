@@ -49,7 +49,7 @@ resource "kubernetes_namespace" "example" {
   }
 }
 
-resource "kubernetes_deployment_v1" "default" {
+resource "kubernetes_deployment_v1" "primary" {
   metadata {
     name = "go-eth-app"
     namespace = kubernetes_namespace.example.metadata[0].name
@@ -84,7 +84,7 @@ resource "kubernetes_deployment_v1" "default" {
   }
 }
 
-resource "kubernetes_service_v1" "default" {
+resource "kubernetes_service_v1" "primary" {
   metadata {
     name = "go-eth-loadbalancer"
     namespace = kubernetes_namespace.example.metadata[0].name
