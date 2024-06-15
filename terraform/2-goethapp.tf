@@ -21,6 +21,11 @@ resource "google_container_cluster" "primary" {
     ]
   }
 }
+resource "kubernetes_namespace" "primary" {
+  metadata {
+    name = "go-eth-namespace"
+  }
+}
 
 resource "kubernetes_deployment_v1" "primary" {
   metadata {
