@@ -1,15 +1,17 @@
+data "google_client_config" "default" {}
+
 provider "google" {
   project = var.project_id
   region  = var.region
 }
 
 provider "kubernetes" {
-  host                   = "https://${google_container_cluster.default.endpoint}"
+  host                   = "https://${google_container_cluster.primary.endpoint}"
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+  cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
 }
 
-data "google_client_config" "default" {}
+
 
 resource "google_container_cluster" "primary" {
   name     = var.cluster_name
@@ -104,7 +106,7 @@ resource "kubernetes_service_v1" "default" {
 
 # Provide time for Service cleanup
 resource "time_sleep" "wait_service_cleanup" {
-  depends_on = [google_container_cluster.default]
+  depends_on = [google_container_cluster.primary]
 
   destroy_duration = "180s"
 }
