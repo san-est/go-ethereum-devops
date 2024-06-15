@@ -1,5 +1,3 @@
-data "google_client_config" "default" {}
-
 provider "google" {
   project = var.project_id
   region  = var.region
@@ -9,11 +7,38 @@ provider "kubernetes" {
   host                   = "https://${google_container_cluster.default.endpoint}"
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+}
 
-  ignore_annotations = [
-    "^autopilot\\.gke\\.io\\/.*",
-    "^cloud\\.google\\.com\\/.*"
-  ]
+data "google_client_config" "default" {}
+
+resource "google_container_cluster" "primary" {
+  name     = var.cluster_name
+  location = var.region
+
+  initial_node_count = 1
+
+  node_config {
+    machine_type = "e2-medium"
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+  }
+}
+
+resource "google_container_node_pool" "primary_nodes" {
+  cluster    = google_container_cluster.primary.name
+  location   = google_container_cluster.primary.location
+  node_count = 1
+
+  node_config {
+    preemptible  = false
+    machine_type = "e2-medium"
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+  }
 }
 
 resource "kubernetes_namespace" "example" {
@@ -25,6 +50,7 @@ resource "kubernetes_namespace" "example" {
 resource "kubernetes_deployment_v1" "default" {
   metadata {
     name = "go-eth-app"
+    namespace = kubernetes_namespace.example.metadata[0].name
   }
 
   spec {
@@ -49,7 +75,6 @@ resource "kubernetes_deployment_v1" "default" {
 
           port {
             container_port = 8080
-            name           = "go-eth-svc"
           }
         }
       }
@@ -67,13 +92,11 @@ resource "kubernetes_service_v1" "default" {
     selector = {
       app = "go-eth-app"
     }
-
+    type = "LoadBalancer"
     port {
       port        = 80
       target_port = 8080
     }
-
-    type = "LoadBalancer"
   }
 
   depends_on = [time_sleep.wait_service_cleanup]
