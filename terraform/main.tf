@@ -73,7 +73,7 @@ resource "kubernetes_service" "default" {
 
   spec {
     selector = {
-      app = go-eth-app
+      app = "go-eth-app"
     }
 
     port {
