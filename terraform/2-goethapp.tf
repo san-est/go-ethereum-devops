@@ -6,12 +6,14 @@ resource "google_container_cluster" "primary" {
 
   node_pool {
     name       = "default-pool"
-    machine_type = "e2-medium"   # Adjust machine type as needed
-    disk_size_gb = 30            # Adjust disk size as needed
-    min_count = 1
-    max_count = 3
-    node_count = 1
+    initial_node_count = 1
+    node_config {
+      machine_type = "e2-medium"
+      disk_size_gb = 30
+    }
   }
+
+  remove_default_node_pool = true
 
   lifecycle {
     ignore_changes = [
