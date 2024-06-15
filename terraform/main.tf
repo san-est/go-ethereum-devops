@@ -1,3 +1,5 @@
+data "google_client_config" "default" {}
+
 provider "google" {
   project     = "go-ethereum-devops"
   region      = "us-central1"
@@ -25,10 +27,14 @@ resource "google_container_cluster" "primary" {
 }
 
 provider "kubernetes" {
-  host  = google_container_cluster.primary.endpoint 
-  client_certificate     = base64decode(google_container_cluster.primary.master_auth.0.client_certificate)
-  client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
-  cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)
+  host                   = "https://${google_container_cluster.default.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+
+  ignore_annotations = [
+    "^autopilot\\.gke\\.io\\/.*",
+    "^cloud\\.google\\.com\\/.*"
+  ]
 }
 
 resource "kubernetes_deployment" "default" {
