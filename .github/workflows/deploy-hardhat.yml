@@ -1,27 +1,34 @@
 name: Deploying hardhat
 
 on:
+  # Specifying to only run on when a labeld pull request is merged to the master branch.
   pull_request:
     branches: [ "master" ]
     types: [ labeled ]
 
+  # Adding this so that I can test my jobs and run workflows manually from the Actions tab in the repository (if use now it will skip over the workflow as there is no labeled PR)
   workflow_dispatch:
 
+  # Defining my registry and image as variables for ease of use
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: san-est/go-ethereum-devops
 
 jobs:
   deploy-hardhat:
+    # If statement to only run when the PR has a label.
     if: ${{ github.event.label.name == 'CI:Deploy' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       id-token: write
+
+    # I checkout the repository
     steps:
     - uses: actions/checkout@v4
-
+    
+    # Login to ghcr.io
     - name: Login to registry
       uses: docker/login-action@v2
       with:
@@ -32,15 +39,20 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    # This pulls the image that we created in the docker-image.yml workflow from step.1
     - name: Pull image
       run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-
+    
+    # I run a container of the go-ethereum-devops image that is build with the first workflow so that I can deploy
+    # hardhat to it and copy over the files from the initialized hardhat project we have in the current github repo 
+    # in the hardhat folder
     - name: Running image container
       run: |
         echo "Workspace path: /workspace/hardhat"
         docker run -d --name devnet -p 8545:8545 \
         ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
+    # Here I copy over files from the current git repo over to the container
     - name: Copy over hardhat files to running container
       run: |
         docker exec devnet mkdir -p /workspace/hardhat
@@ -49,26 +61,34 @@ jobs:
         docker exec devnet ls -l /workspace/hardhat
         docker exec devnet ls -l /workspace
       #steps were added so i can troublshoot and see if the folder is mounted properly
-      
+    
+    # I isntall node.js and npm to the container
     - name: Installing Node.js and npm
       run: |
         docker exec devnet apk add --no-cache nodejs npm
-    
+
+    # I install a local version of hardhat as I tried to do it with a remote installation but its not supported
     - name: Install local version of hardhat
       run: docker exec devnet sh -c "cd /workspace/hardhat && npm install hardhat"
 
+    # I check if hardhat is installed
     - name: Verify if Hardhat is installed
       run: |
         docker exec devnet npx hardhat --version
 
+    # Deployment of sample contracts
     - name: Deploy hardhat sample project
       run: |
         docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat ignition deploy ./ignition/modules/Lock.js"
 
+    # Testing contracts as per step No.4 of the task
     - name: Testing contracts
       run: |
         docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat test"
 
+    # The following steps build a new image with the installed local version of hardhat and its contracts applied
+    # and then uploads it to the ghcr.io registry
+    # the new image can be found here: ghcr.io/san-est/go-eth-hardhat:latest
     - name: Build a new docker image
       run: |
         docker commit devnet go-eth-hardhat:latest

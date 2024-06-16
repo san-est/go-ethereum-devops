@@ -1,10 +1,12 @@
 data "google_client_config" "default" {}
 
+# Configurng GCP as provider
 provider "google" {
   project     = "go-ethereum-devops"
   region      = "us-central1"
 }
 
+# Declaring resources for my GCP k8s Cluster
 resource "google_container_cluster" "primary" {
   name       = "go-ethereum-cluster"
   location   = "us-central1"
@@ -26,6 +28,7 @@ resource "google_container_cluster" "primary" {
   }
 }
 
+# Configuring k8s as provider
 provider "kubernetes" {
   host                   = "https://${google_container_cluster.primary.endpoint}"
   token                  = data.google_client_config.default.access_token
@@ -37,6 +40,7 @@ provider "kubernetes" {
   ]
 }
 
+# Declaring resourecs for my k8s deployment and pointing the containers to get the image we built in previous tasks
 resource "kubernetes_deployment" "default" {
   metadata {
     name = "go-eth-app"
@@ -72,6 +76,7 @@ resource "kubernetes_deployment" "default" {
   }
 }
 
+# Creating a loadbalancer service so that the application is accessble from outside of the cluster
 resource "kubernetes_service" "default" {
   metadata {
     name = "go-eth-service"

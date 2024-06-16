@@ -1,26 +1,33 @@
 name: Docker Image Build and Push to ghcr
 
 on:
+  # Specifying to only run on when a labeld pull request is merged to the master branch.
   pull_request:
     branches: [ "master" ]
     types: [ labeled ]
 
-  # Adding this so that I can test my jobs and run workflows manually from the Actions tab in the repository
+  # Adding this so that I can test my jobs and run workflows manually from the Actions tab in the repository (if use now it will skip over the workflow as there is no labeled PR)
   workflow_dispatch:
 
+  # Defining my registry and image as variables for ease of use
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: san-est/go-ethereum-devops
 
 jobs:
   build-and-push:
+  # If statement to only run when the PR has a label.
     if: ${{ github.event.label.name == 'CI:Build' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       id-token: write
-
+# The Steps I follow are:
+# 1. I checkout the repository
+# 2. I login to ghcr.io
+# 3. I build the new docker image and I push it to the ghcr.io registry
+# Image and its previos versions can afterwards be found here: ghcr.io/san-est/go-ethereum-devops:latest
     steps:
     - uses: actions/checkout@v4
 
@@ -38,4 +45,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         push: true
+    # I had dynamic tags for the created image but could not really figure out 
+    # how to then dynamically pull the most recent image from ghcr.io in my docker-compose file.
+    # Thats why I reverted to use the latest tag even though it does not work as expected :)
         tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
