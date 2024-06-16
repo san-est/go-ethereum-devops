@@ -1,23 +1,34 @@
 ## DevOps Take Home Task
-The beginning of this README file explains steps taken to complete the home assignment, afterwards, there is the official documentation of the golang execution layer implementation for the Etherium protocol.
+The beginning of this README file explains the steps taken to complete the home assignment, afterwards, there is the official documentation of the golang execution layer implementation for the Ethereum protocol.
 
 I'll describe my actions step by step as per the assignment:
 
 1. Fork the following repo:
-    a. go-ethereum (geth) https://github.com/ethereum/go-ethereum
-   - If you are reading this then you are in the right place, a fork of the source :)
-
+    - go-ethereum (geth) https://github.com/ethereum/go-ethereum
+        - If you are reading this then you are in the right place, a fork of the source :)
 2. Update your forked repo with the following functionality:
-    a. When a PR with label `CI:Build` is merged in it, a trigger kicks in and:
-        1.1. builds a new docker image of the given project
-        1.2. uploads it to a registry
-    - This workflow is realized with the .github/workflows/docker-image.yml file, once opened you will see that I've written comments for each of the steps to give a more detailed explanation for each of the steps.
-    b. Create a Docker Compose definition that runs a local devnet with the newly built image.
-    - The Docker compose file resides in the root of the git repository named: dockercompose.yaml, again I've added comments for the steps for further details.
+    - When a PR with label `CI:Build` is merged in it, a trigger kicks in and:
+    - builds a new docker image of the given project
+    - uploads it to a registry
+        - This workflow is realized with the `.github/workflows/docker-image.yml` file, once opened you will see that I've written comments to give a more detailed explanation for each of the steps.
+  
+    - Create a Docker Compose definition that runs a local devnet with the newly built image.
+        - The Docker compose file resides in the root of the git repository named: `dockercompose.yaml`, again I've added comments for the steps for further details. An issue I encountered with with the docker compose file is I could not pull dynamically tagged images built with the `CI:Build` workflow (described also as a comment in the `docker-image.yml` workflow) so I reverted to using `:latest` tag.
 
+3. Create e new directory named `hardhat` in the repository. Inside it start a new Sample Hardhat Project (following official Hardhat docs).
+* 'https://hardhat.org/hardhat-runner/docs/getting-started#overview' was followed to initialize a Javascript project in the folder `hardhat`. The `.gitignore` file was also created during the sample project deployment.
 
+    - When a PR with label CI:Deploy is merged in the repo, a pipeline is triggered that:
+    - runs a local devnet using the forked go-ethereum image.
+    - deploys the Sample Hardhat Project to it.
+    - builds a new docker image, which allows to run an instance of the devnet with the contracts already deployed and uploads it to the same registry with a suitable different tag
+        - These four steps were realized with the `.github/workflows/deploy-hardhay.yml` file, I've also commented within the file to explain the steps I've taken to realize the goal of the task.
+     
+4. Add a step to the pipeline which runs the hardhat tests from the sample project against the image with predeployed contracts.
+       - This is also realized in the `.github/workflows/deploy-hardhay.yml` - I've commented before the step which checks the contracts to give details.
 
-
+5. Create a Terraform script that quickly creates a k8s cluster in the cloud and deploys an instance of the built image to it.
+       - The terraform script I've written resides inside the `terraform` folder in the root of the repository. For the purpose of this task, I used GCP and its GKE service. Initially i followed official documentation from Google on deploying a sample application with terraform, having multiple `.tf` files, however, it turned out way heavier and complicated than expected so I started simplifying until I had the single `main.tf` file with all the providers and resources inside of it so that complete the goal of the task with least overhead, afterwards upgrade is always possible.
 
 
 
