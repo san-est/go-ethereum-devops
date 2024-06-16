@@ -2,16 +2,16 @@ version: '3.9'
 
 services:
   geth:
+    #getting the image that was built with the CI:Deploy workflow
     image: ghcr.io/san-est/go-ethereum-devops:latest
     #ports were grabbed from the docker quick start in the README within https://github.com/ethereum/go-ethereum
     ports:
       - "8545:8545"
       - "30303:30303"
-    #enabling RPC server, binding it to all availible networks, sets on which port RPC should listen to and availible APIs.
+    #enabling RPC server, sets on which port RPC should listen to, ads availible APIs and opens --http.vhosts to be reachable from within the network, needed by user-ops-indexer.
     command: ["--http", "--http.addr", "0.0.0.0", "--http.port", "8545", "--http.api", "eth,net,web3,txpool", "--http.vhosts", "*"]
 
-#The following part is all from the docker-compose for Blockscout explorer further spread from all of the files in the service directory
-#I followed the geth.yml they have in the blockscout/docker-compose directory in GitHub
+#The following part is all from the docker-compose geth.yml file for Blockscout explorer found in their GitHub repo: https://github.com/blockscout/blockscout/tree/master/docker-compose
 
   redis-db:
     extends:
