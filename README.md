@@ -22,13 +22,24 @@ I'll describe my actions step by step as per the assignment:
     - runs a local devnet using the forked go-ethereum image.
     - deploys the Sample Hardhat Project to it.
     - builds a new docker image, which allows to run an instance of the devnet with the contracts already deployed and uploads it to the same registry with a suitable different tag
-        - These four steps were realized with the `.github/workflows/deploy-hardhay.yml` file, I've also commented within the file to explain the steps I've taken to realize the goal of the task.
+      
+* These four steps were realized with the `.github/workflows/deploy-hardhay.yml` file, I've also commented within the file to explain the steps I've taken to realize the goal of the task.
      
 4. Add a step to the pipeline which runs the hardhat tests from the sample project against the image with predeployed contracts.
-       - This is also realized in the `.github/workflows/deploy-hardhay.yml` - I've commented before the step which checks the contracts to give details.
+    - This is also realized in the `.github/workflows/deploy-hardhay.yml`
+    - I've commented before the step which checks the contracts to give details.
 
-5. Create a Terraform script that quickly creates a k8s cluster in the cloud and deploys an instance of the built image to it.
-       - The terraform script I've written resides inside the `terraform` folder in the root of the repository. For the purpose of this task, I used GCP and its GKE service. Initially i followed official documentation from Google on deploying a sample application with terraform, having multiple `.tf` files, however, it turned out way heavier and complicated than expected so I started simplifying until I had the single `main.tf` file with all the providers and resources inside of it so that complete the goal of the task with least overhead, afterwards upgrade is always possible.
+6. Create a Terraform script that quickly creates a k8s cluster in the cloud and deploys an instance of the built image to it.
+    - The terraform script I've written resides inside the `terraform` folder in the root of the repository. For the purpose of this task, I used GCP and its GKE service. Initially, I followed official documentation from Google on deploying a sample application with terraform, having multiple `.tf` files, however, it turned out way heavier and complicated than expected so I started simplifying until I had the single `main.tf` file with all the providers and resources inside of it so that I can complete the goal of the task with least overhead, afterwards, upgrade and deployment of additional services is always possible.
+    - Comments for each of the different components in the terraform script are added to explain further what I'm doing to accomplish the task.
+    - The cluster is operational and running, the following screenshots are illustrating how the cluster is viewed through the Google cloud console and screenshots of running a hardhat test against one of the running pods with our image built from previous steps.
+    - A view of the k8s cluster running in GCP
+    - ![image](https://github.com/san-est/go-ethereum-devops/assets/23378546/ab978835-6d72-46b8-a890-28a5ca95c9b4)
+    - A view of all nodes running
+    - ![image](https://github.com/san-est/go-ethereum-devops/assets/23378546/b09fc99a-1c18-414b-8503-44e885f165e5)
+    - A view of testing hardhat contracts to one of the running pods of the image we built
+    - ![image](https://github.com/san-est/go-ethereum-devops/assets/23378546/4f2d4cc1-39e7-4d91-91ad-3129ad6580a7)
+
 
 
 
