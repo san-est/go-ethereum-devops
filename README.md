@@ -23,10 +23,10 @@ I'll describe my actions step by step as per the assignment:
     - deploys the Sample Hardhat Project to it.
     - builds a new docker image, which allows to run an instance of the devnet with the contracts already deployed and uploads it to the same registry with a suitable different tag
       
-* These four steps were realized with the `.github/workflows/deploy-hardhay.yml` file, I've also commented within the file to explain the steps I've taken to realize the goal of the task.
+* These four steps were realized with the `.github/workflows/deploy-hardhat.yml` file, I've also commented within the file to explain the steps I've taken to realize the goal of the task.
      
 4. Add a step to the pipeline which runs the hardhat tests from the sample project against the image with predeployed contracts.
-    - This is also realized in the `.github/workflows/deploy-hardhay.yml`
+    - This is also realized in the `.github/workflows/deploy-hardhat.yml`
     - I've commented before the step which checks the contracts to give details.
 
 6. Create a Terraform script that quickly creates a k8s cluster in the cloud and deploys an instance of the built image to it.
