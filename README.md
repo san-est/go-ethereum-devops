@@ -13,7 +13,7 @@ I'll describe my actions step by step as per the assignment:
         - This workflow is realized with the `.github/workflows/docker-image.yml` file, once opened you will see that I've written comments to give a more detailed explanation for each of the steps.
   
     - Create a Docker Compose definition that runs a local devnet with the newly built image.
-        - The Docker compose file resides in the root of the git repository named: `dockercompose.yaml`, again I've added comments for the steps for further details. An issue I encountered with with the docker compose file is I could not pull dynamically tagged images built with the `CI:Build` workflow (described also as a comment in the `docker-image.yml` workflow) so I reverted to using `:latest` tag.
+        - The Docker compose file resides in the `/docker-compose` folder in the git repository named: `docker-compose.yaml`, again I've added comments for the steps for further details. An issue I encountered with the docker compose file is I could not pull dynamically tagged images built with the `CI:Build` workflow (described also as a comment in the `docker-image.yml` workflow) so I reverted to using `:latest` tag.
 
 3. Create e new directory named `hardhat` in the repository. Inside it start a new Sample Hardhat Project (following official Hardhat docs).
 * 'https://hardhat.org/hardhat-runner/docs/getting-started#overview' was followed to initialize a Javascript project in the folder `hardhat`. The `.gitignore` file was also created during the sample project deployment.
@@ -29,7 +29,7 @@ I'll describe my actions step by step as per the assignment:
     - This is also realized in the `.github/workflows/deploy-hardhat.yml`
     - I've commented before the step which checks the contracts to give details.
 
-6. Create a Terraform script that quickly creates a k8s cluster in the cloud and deploys an instance of the built image to it.
+5. Create a Terraform script that quickly creates a k8s cluster in the cloud and deploys an instance of the built image to it.
     - The terraform script I've written resides inside the `terraform` folder in the root of the repository. For the purpose of this task, I used GCP and its GKE service. Initially, I followed official documentation from Google on deploying a sample application with terraform, having multiple `.tf` files, however, it turned out way heavier and complicated than expected so I started simplifying until I had the single `main.tf` file with all the providers and resources inside of it so that I can complete the goal of the task with least overhead, afterwards, upgrade and deployment of additional services is always possible.
     - Comments for each of the different components in the terraform script are added to explain further what I'm doing to accomplish the task.
     - The cluster is operational and running, the following screenshots are illustrating how the cluster is viewed through the Google cloud console and screenshots of running a hardhat test against one of the running pods with our image built from previous steps.
@@ -40,10 +40,20 @@ I'll describe my actions step by step as per the assignment:
     - A view of testing hardhat contracts to one of the running pods of the image we built
     - ![image](https://github.com/san-est/go-ethereum-devops/assets/23378546/4f2d4cc1-39e7-4d91-91ad-3129ad6580a7)
 
+6. (Bonus) Add Blockscout Explorer to the Docker Compose definition created
+    - For the purpose of this task I reviewed the documentation inside:  https://docs.blockscout.com/for-developers/deployment/docker-compose-deployment and as well as in the https://github.com/blockscout/blockscout/tree/master/docker-compose for further details
+    - I've updated the `docker-compose.yml` file in the docker-compose folder.
+    - Initially, I was searching for an already pre-built docker image but there isn't just one published in a registry, however, after further look through I noticed that each of the services described in the geth.yml file points to its needed docker image, and each of the services has its own docker compose file described in the `docker-compose/services` folder which I cloned over from the Blockscout github repository. This still ensures that the pulling of the image is dynamic as it will get the latest available image when run.
+    - The files that are not dynamically updated are the environment configurations in the `envs` folder and the proxy configurations in the `proxy` folder.
+    - When initially built the docker-compose file creates several other directories needed to store data, I've added all of those to the `.gitignore` file so that they are not uploaded to the github repository.
+    - When the docker-compose file is spun up locally all of the services and containers start up successfully and the services built by Blockscout Explorer are able to communicate with the `go-ethereum` image built in point 1 of this assignment.
+    - ![image](https://github.com/san-est/go-ethereum-devops/assets/23378546/25fe1804-7584-4112-9ca6-b3272482562a)
 
+    - The only issue I'm encountering is that I can't get the frontend to show up. In the documentation, its described that if the node is ran locally it should be on HTTP://0.0.0.0 rather than HTTP://127.0.0.1 but even after I alter the configuration I'm unable to display the front end.
+    - I was unable to find what exactly was causing this issue and could not see an error that could point me to where this issue might be. I'll investigate further locally.
 
-
-
+**Usage of AI**
+ - For this assignment, I utilized AI assistance only when encountering specific errors or issues, for some cases I found it easier to explain how I reached an error to AI than to spend a lot of time searching for similar issues. Of course, AI only pointed me to what I should be looking into rather than doing the task instead of me, furthermore, since AI does not have entirely up-to-date information I could not utilize it much, I even resorted to searching for some solutions in the Blockscout Explorer discord channel :)
 
 ## Go Ethereum
 
