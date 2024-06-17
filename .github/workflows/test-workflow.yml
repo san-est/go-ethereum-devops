@@ -50,7 +50,7 @@ jobs:
         docker run -d --name go-ethereum -p 8545:8545 -p 30303:30303 ghcr.io/san-est/go-ethereum-devops:latest \
           --networkid 5777 --nodiscover --http --http.addr 0.0.0.0 --http.port 8545 \
           --http.api personal,db,eth,net,web3 --allow-insecure-unlock --dev
-          
+
     # Here I copy over files from the current git repo over to the container
     - name: Copy over hardhat files to running container
       run: |
@@ -82,7 +82,7 @@ jobs:
     # Testing contracts as per step No.4 of the task
     - name: Testing contracts
       run: |
-        docker exec go-ethereum sh -c "cd /workspace/hardhat && npx hardhat test"
+        docker exec go-ethereum sh -c "cd /workspace/hardhat && npx hardhat test --network devnet"
 
     # The following steps build a new image with the installed local version of hardhat and its contracts applied
     # and then uploads it to the ghcr.io registry
