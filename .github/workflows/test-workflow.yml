@@ -54,43 +54,43 @@ jobs:
     # Here I copy over files from the current git repo over to the container
     - name: Copy over hardhat files to running container
       run: |
-        docker exec devnet mkdir -p /workspace/hardhat
-        docker cp ${{ github.workspace }}/hardhat devnet:/workspace/
-        docker exec devnet ls /workspace/hardhat
-        docker exec devnet ls -l /workspace/hardhat
-        docker exec devnet ls -l /workspace
+        docker exec go-ethereum mkdir -p /workspace/hardhat
+        docker cp ${{ github.workspace }}/hardhat go-ethereum:/workspace/
+        docker exec go-ethereumt ls /workspace/hardhat
+        docker exec go-ethereum ls -l /workspace/hardhat
+        docker exec go-ethereum ls -l /workspace
       #steps were added so i can troublshoot and see if the folder is mounted properly
     
     # I isntall node.js and npm to the container
     - name: Installing Node.js and npm
       run: |
-        docker exec devnet apk add --no-cache nodejs npm
+        docker exec go-ethereum apk add --no-cache nodejs npm
 
     # I install a local version of hardhat as I tried to do it with a remote installation but its not supported
     - name: Install local version of hardhat
-      run: docker exec devnet sh -c "cd /workspace/hardhat && npm install hardhat"
+      run: docker exec go-ethereum sh -c "cd /workspace/hardhat && npm install hardhat"
 
     # I check if hardhat is installed
     - name: Verify if Hardhat is installed
       run: |
-        docker exec devnet npx hardhat --version
+        docker exec go-ethereum npx hardhat --version
 
     # Deployment of sample contracts
     - name: Deploy hardhat sample project
       run: |
-        docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat ignition deploy ./ignition/modules/Lock.js --network devnet"
+        docker exec go-ethereum sh -c "cd /workspace/hardhat && npx hardhat ignition deploy ./ignition/modules/Lock.js --network devnet"
 
     # Testing contracts as per step No.4 of the task
     - name: Testing contracts
       run: |
-        docker exec devnet sh -c "cd /workspace/hardhat && npx hardhat test"
+        docker exec go-ethereum sh -c "cd /workspace/hardhat && npx hardhat test"
 
     # The following steps build a new image with the installed local version of hardhat and its contracts applied
     # and then uploads it to the ghcr.io registry
     # the new image can be found here: ghcr.io/san-est/go-eth-hardhat:latest
     - name: Build a new docker image
       run: |
-        docker commit devnet go-eth-hardhat:latest
+        docker commit go-ethereum go-eth-hardhat:latest
         docker tag go-eth-hardhat:latest ${{ env.REGISTRY }}/${{ github.repository_owner }}/go-eth-hardhat:latest
   
     - name: Push new image to ghcr.io
