@@ -54,6 +54,7 @@ jobs:
     # Here I copy over files from the current git repo over to the container
     - name: Copy over hardhat files to running container
       run: |
+        docker exec go-ethereum ifconfig
         docker exec go-ethereum mkdir -p /workspace/hardhat
         docker cp ${{ github.workspace }}/hardhat go-ethereum:/workspace/
         docker exec go-ethereum ls /workspace/hardhat
