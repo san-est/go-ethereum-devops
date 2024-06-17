@@ -47,8 +47,9 @@ jobs:
     - name: Running image container
       run: |
         echo "Workspace path: /workspace/hardhat"
-        docker run -d --name go-ethereum -p 8545:8545 \
-        ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \ --dev
+        docker run -d --name go-ethereum -p 8545:8545 -p 30303:30303 ghcr.io/san-est/go-ethereum-devops:latest  \ 
+        --networkid 5777 --nodiscover --http --http.addr 0.0.0.0 --http.port 8545 \ 
+        --http.api personal,db,eth,net,web3 --allow-insecure-unlock --dev
 
     # Here I copy over files from the current git repo over to the container
     - name: Copy over hardhat files to running container
@@ -57,7 +58,6 @@ jobs:
         docker cp ${{ github.workspace }}/hardhat go-ethereum:/workspace/
         docker exec go-ethereum ls /workspace/hardhat
         docker exec go-ethereum ls -l /workspace/hardhat
-        docker exec go-ethereum sh -c "geth --dev"
       #steps were added so i can troublshoot and see if the folder is mounted properly
     
     # I isntall node.js and npm to the container
