@@ -5,7 +5,7 @@ module.exports = {
   solidity: "0.8.24",
   networks: {
     devnet: {
-      url: "http://localhost:8545",
+      url: "http://0.0.0.0:8545",
     },
   },
 };
