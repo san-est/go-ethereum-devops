@@ -56,7 +56,7 @@ jobs:
       run: |
         docker exec go-ethereum mkdir -p /workspace/hardhat
         docker cp ${{ github.workspace }}/hardhat go-ethereum:/workspace/
-        docker exec go-ethereumt ls /workspace/hardhat
+        docker exec go-ethereum ls /workspace/hardhat
         docker exec go-ethereum ls -l /workspace/hardhat
         docker exec go-ethereum ls -l /workspace
       #steps were added so i can troublshoot and see if the folder is mounted properly
