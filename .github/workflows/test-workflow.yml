@@ -1,4 +1,4 @@
-name: Deploying hardhat
+name: test-network issue
 
 on:
   # Specifying to only run on when a labeld pull request is merged to the master branch.
@@ -47,7 +47,7 @@ jobs:
     - name: Running image container
       run: |
         echo "Workspace path: /workspace/hardhat"
-        docker run -d --name go-ethereum -network devnet -p 8545:8545 \
+        docker run -d --name go-ethereum --network devnet -p 8545:8545 \
         ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
     # Here I copy over files from the current git repo over to the container
