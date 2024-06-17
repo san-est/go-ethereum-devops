@@ -47,8 +47,7 @@ jobs:
     - name: Running image container
       run: |
         echo "Workspace path: /workspace/hardhat"
-        docker network create devnet
-        docker run -d --name go-ethereum --network devnet -p 8545:8545 \
+        docker run -d --name go-ethereum --network=devnet -p 8545:8545 \
         ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
     # Here I copy over files from the current git repo over to the container
