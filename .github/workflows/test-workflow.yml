@@ -78,6 +78,7 @@ jobs:
     - name: Deploy hardhat sample project
       run: |
         docker exec go-ethereum sh -c "cd /workspace/hardhat && npx hardhat ignition deploy ./ignition/modules/Lock.js --network devnet"
+        docker exec go-ethereum sh -c "y"
 
     # Testing contracts as per step No.4 of the task
     - name: Testing contracts
