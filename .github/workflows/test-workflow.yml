@@ -47,19 +47,17 @@ jobs:
     - name: Running image container
       run: |
         echo "Workspace path: /workspace/hardhat"
-        docker network create devnet
-        docker run -d --name go-ethereum --network=devnet -p 8545:8545 \
-        ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        docker run -d --name go-ethereum -p 8545:8545 \
+        ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \ --dev
 
     # Here I copy over files from the current git repo over to the container
     - name: Copy over hardhat files to running container
       run: |
-        docker exec go-ethereum ifconfig
         docker exec go-ethereum mkdir -p /workspace/hardhat
         docker cp ${{ github.workspace }}/hardhat go-ethereum:/workspace/
         docker exec go-ethereum ls /workspace/hardhat
         docker exec go-ethereum ls -l /workspace/hardhat
-        docker exec go-ethereum ls -l /workspace
+        docker exec go-ethereum sh -c "geth --dev"
       #steps were added so i can troublshoot and see if the folder is mounted properly
     
     # I isntall node.js and npm to the container
