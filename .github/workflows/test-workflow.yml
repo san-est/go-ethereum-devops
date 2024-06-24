@@ -82,7 +82,7 @@ jobs:
     # Testing contracts as per step No.4 of the task
     - name: Testing contracts
       run: |
-        docker exec go-ethereum sh -c "cd /workspace/hardhat && npx hardhat test --network devnet"
+        docker exec go-ethereum sh -c "cd /workspace/hardhat && npx hardhat test"
 
     # The following steps build a new image with the installed local version of hardhat and its contracts applied
     # and then uploads it to the ghcr.io registry
