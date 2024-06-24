@@ -47,9 +47,9 @@ jobs:
     - name: Running image container
       run: |
         echo "Workspace path: /workspace/hardhat"
-        docker run -d --name go-ethereum -p 8545:8545 -p 30303:30303 ghcr.io/san-est/go-ethereum-devops:latest \
-          --networkid 5777 --nodiscover --http --http.addr 0.0.0.0 --http.port 8545 \
-          --http.api personal,db,eth,net,web3 --allow-insecure-unlock --dev
+        docker run -d --name go-ethereum -p 8545:8545 -p 8546:8546 ghcr.io/san-est/go-ethereum-devops:latest \
+          --dev --http --http.addr 0.0.0.0 --http.port 8545 \
+          --http.api personal,db,eth,net,web3 --dev.period 5
 
     # Here I copy over files from the current git repo over to the container
     - name: Copy over hardhat files to running container
